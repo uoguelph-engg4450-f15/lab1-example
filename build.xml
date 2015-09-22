@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<project name="asgn1b" default="all">
+    <property name="src.dir"        value="."/>
+    <property name="build.dir"      value="."/>
+    <property name="javadoc.dir"    value="doc"/>
+    <property name="javadoc.title"  value="ENGG*4450 Lab 1 Example"/>
+    <property name="javadoc.header" value="ENGG*4450 Lab 1 Example"/>
+
+    <property environment="ENV"/>
+    <property name="debugger"
+              value="${ENV.DEBUGHOME}/bin/bugseeker2.sh"/>
+
+    <path id="class.path">
+        <pathelement location="${build.dir}"/>
+        <pathelement path="${java.class.path}"/>
+    </path>
+
+    <target name="all" depends="compile,javadoc"/>
+
+    <target name="compile" description="Compile Java code">
+        <javac srcdir="${src.dir}"
+               destdir="${build.dir}"
+               debug="on"
+               classpathref="class.path"
+        />
+    </target>
+
+    <target name="javadoc" description="Generate Javadoc">
+        <mkdir dir="${javadoc.dir}"/>
+        <javadoc packagenames="plan.*"
+                 sourcepath="${src.dir}"
+                 destdir="${javadoc.dir}"
+                 use="true"
+                 private="true"
+                 overview="overview.html"
+                 header="${javadoc.header}"
+                 windowtitle="${javadoc.title}"
+                 doctitle="${javadoc.title}"
+        />
+    </target>
+
+    <target name="clean" description="Clean up">
+        <delete dir="${javadoc.dir}"/>
+        <delete>
+            <fileset dir="${build.dir}" includes="**/*.class"/>
+        </delete>
+    </target>
+
+    <target name="debug" if="debugproj" description="Debug with Bugseeker">
+        <property name="class.path" refid="class.path"/>
+        <exec executable="${debugger}">
+            <env key="CLASSPATH" value="${class.path}"/>
+            <arg file="${debugproj}"/>
+        </exec>
+    </target>
+
+    <target name="runp" description="Run with planetaria.xml">
+        <java classname="plan.Plan"
+              classpathref="class.path"
+              fork="yes">
+            <arg value="planetaria.xml"/>
+            <arg value="Planetaria"/>
+            <arg value="50"/>
+        </java>
+    </target>
+
+    <target name="runr" description="Run with random.xml">
+        <java classname="plan.Plan"
+              classpathref="class.path"
+              fork="yes">
+            <arg value="random.xml"/>
+            <arg value="S2"/>
+            <arg value="340"/>
+        </java>
+    </target>
+</project>
